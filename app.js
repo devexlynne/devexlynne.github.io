@@ -1,1 +1,1 @@
-(()=>{for(const href of ['prototype.css','media.css?v=e3cb232']){const css=document.createElement('link');css.rel='stylesheet';css.href=href;document.head.append(css)}const script=document.createElement('script');script.src='portal.js?v=e3cb232';document.body.append(script)})();
+(()=>{for(const href of ['prototype.css','media.css?v=e3cb232']){const css=document.createElement('link');css.rel='stylesheet';css.href=href;document.head.append(css)}const script=document.createElement('script');script.src='portal.js?v=6534602';document.body.append(script)})();
