@@ -15,5 +15,8 @@ drop policy if exists "admins read listings" on public.listings; create policy "
 drop policy if exists "admins update listings" on public.listings; create policy "admins update listings" on public.listings for update to authenticated using(public.is_admin()) with check(public.is_admin());
 create or replace view public.listings_public with(security_invoker=false) as select id,name,business_types,description,governorate,district,town,map_url,phone,whatsapp,email,website,facebook,instagram,products_services,crops,details,verified from public.listings where status='approved' and consent is not null;
 grant select on public.listings_public to anon,authenticated; revoke all on public.listings from anon;
+drop policy if exists "public can submit pending listings" on public.listings;
+create policy "public can submit pending listings" on public.listings for insert to anon with check(status='pending' and verified=false and reviewer_notes='' and consent is not null and accuracy_confirmation is not null and length(trim(name))>=2);
+grant insert on public.listings to anon;
 -- After creating the admin in Authentication > Users, replace the email below and run it once:
 -- insert into public.admin_users(email) values ('YOUR_ADMIN_EMAIL') on conflict do nothing;

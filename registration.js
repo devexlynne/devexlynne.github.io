@@ -1,0 +1,16 @@
+(() => {
+  const config = window.AGRI_CONFIG || {}, form = document.querySelector('#registrationForm'), message = document.querySelector('#formMessage'), button = document.querySelector('#submitButton');
+  const splitList = value => String(value || '').split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
+  const optional = value => String(value || '').trim() || null;
+  const show = (text, type) => { message.textContent = text; message.className = `form-message ${type}`; message.scrollIntoView({behavior:'smooth',block:'center'}); };
+  form.addEventListener('submit', async event => {
+    event.preventDefault(); if (!form.reportValidity()) return;
+    if (!config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) return show('تعذّر الاتصال بقاعدة البيانات. يرجى المحاولة لاحقاً.', 'error');
+    const data = Object.fromEntries(new FormData(form).entries());
+    const payload = {name:data.name.trim(),business_types:[data.business_type],description:data.description.trim(),year_established:optional(data.year_established),employees:optional(data.employees),governorate:data.governorate,district:data.district.trim(),town:data.town.trim(),address:optional(data.address),map_url:optional(data.map_url),contact_name:data.contact_name.trim(),position:optional(data.position),phone:data.phone.trim(),whatsapp:optional(data.whatsapp),email:data.email.trim(),website:optional(data.website),facebook:optional(data.facebook),instagram:optional(data.instagram),products_services:splitList(data.products_services),crops:splitList(data.crops),details:optional(data.details),delivery:optional(data.delivery),service_outside:optional(data.service_outside),areas_served:splitList(data.areas_served),online_available:optional(data.online_available),store_url:optional(data.store_url),consent:'Confirmed through portal registration',accuracy_confirmation:'Confirmed through portal registration',status:'pending',verified:false,reviewer_notes:''};
+    button.disabled = true; button.textContent = 'جاري إرسال الطلب…'; message.className = 'form-message';
+    try { const db = supabase.createClient(config.SUPABASE_URL,config.SUPABASE_ANON_KEY), {error} = await db.from('listings').insert(payload); if(error) throw error; form.reset(); show('تم استلام طلبكم بنجاح. ستقوم إدارة الدليل بمراجعته قبل النشر. شكراً لمساهمتكم! 🌱','success'); }
+    catch(error) { console.error(error); show('لم نتمكن من إرسال الطلب حالياً. يرجى التأكد من البيانات والمحاولة مجدداً.','error'); }
+    finally { button.disabled=false; button.textContent='إرسال طلب التسجيل'; }
+  });
+})();
