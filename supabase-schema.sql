@@ -7,13 +7,15 @@ create table if not exists public.listings(
  products_services text[] not null default '{}', crops text[] not null default '{}', details text, logo_url text, main_photo_url text,
  additional_photos text[] not null default '{}', works_directly text, delivery text, service_outside text, areas_served text[], online_available text,
  store_url text, accuracy_confirmation text, consent text, status text not null default 'pending' check(status in('pending','approved','rejected','archived')),
+ directory_category text check(directory_category in('farm','nursery','laboratory','supplies','irrigation','organization','food','services')),
  verified boolean not null default false, reviewer_notes text not null default '', created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
 alter table public.listings enable row level security; alter table public.admin_users enable row level security;
+alter table public.listings add column if not exists directory_category text check(directory_category in('farm','nursery','laboratory','supplies','irrigation','organization','food','services'));
 create or replace function public.is_admin() returns boolean language sql security definer stable set search_path=public as $$select exists(select 1 from admin_users where lower(email)=lower(coalesce(auth.jwt()->>'email','')))$$;
 drop policy if exists "admins read listings" on public.listings; create policy "admins read listings" on public.listings for select to authenticated using(public.is_admin());
 drop policy if exists "admins update listings" on public.listings; create policy "admins update listings" on public.listings for update to authenticated using(public.is_admin()) with check(public.is_admin());
-create or replace view public.listings_public with(security_invoker=false) as select id,name,business_types,description,governorate,district,town,map_url,phone,whatsapp,email,website,facebook,instagram,products_services,crops,details,logo_url,main_photo_url,additional_photos,verified from public.listings where status='approved' and consent is not null;
+create or replace view public.listings_public with(security_invoker=false) as select id,name,business_types,directory_category,description,governorate,district,town,map_url,phone,whatsapp,email,website,facebook,instagram,products_services,crops,details,logo_url,main_photo_url,additional_photos,verified from public.listings where status='approved' and consent is not null;
 grant select on public.listings_public to anon,authenticated; revoke all on public.listings from anon;
 drop policy if exists "public can submit pending listings" on public.listings;
 create policy "public can submit pending listings" on public.listings for insert to anon with check(status='pending' and verified=false and reviewer_notes='' and consent is not null and accuracy_confirmation is not null and length(trim(name))>=2);
