@@ -1,1 +1,1 @@
-(()=>{const css=document.createElement('link');css.rel='stylesheet';css.href='prototype.css';document.head.append(css);const script=document.createElement('script');script.src='portal.js';document.body.append(script)})();
+(()=>{for(const href of ['prototype.css','media.css']){const css=document.createElement('link');css.rel='stylesheet';css.href=href;document.head.append(css)}const script=document.createElement('script');script.src='portal.js';document.body.append(script)})();
