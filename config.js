@@ -1,1 +1,1 @@
-window.AGRI_CONFIG={SUPABASE_URL:"https://YOUR_PROJECT.supabase.co",SUPABASE_ANON_KEY:"YOUR_SUPABASE_PUBLISHABLE_ANON_KEY"};
+window.AGRI_CONFIG={SUPABASE_URL:"https://vqcdzmbcbcocaqswebjq.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_uVydhs9_rR5FZSm5itQCTA_COs8zAKL"};
